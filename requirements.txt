@@ -1,0 +1,14 @@
+# Core runtime dependencies. Install a PyTorch build matching the host CUDA
+# driver first, then install the matching torch-geometric wheels.
+numpy>=1.24,<2
+scipy>=1.10
+networkx>=2.8
+torch>=2.0
+torch-geometric>=2.3
+gym==0.17.2
+garage==2021.3.0
+dowel==0.0.3
+cloudpickle>=2.0
+scikit-learn>=1.2
+python-igraph==0.11.8
+leidenalg==0.10.2
