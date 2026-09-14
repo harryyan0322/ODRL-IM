@@ -206,7 +206,7 @@ class ATAC(RLAlgorithm):
         self._use_automatic_entropy_tuning = fixed_alpha is None
         self._fixed_alpha = fixed_alpha
         if self._use_automatic_entropy_tuning:
-            if target_entropy:
+            if target_entropy is not None:
                 self._target_entropy = target_entropy
             else:
                 self._target_entropy = -np.prod(
@@ -445,7 +445,8 @@ class ATAC(RLAlgorithm):
 
         ##### Update Actor #####
 
-        policy_entropy = (new_actions * torch.log2(new_actions + 1e-10)).sum(dim=2).mean()
+        policy_entropy = (-(new_actions * torch.log(new_actions + 1e-10)
+                           + (1.0 - new_actions) * torch.log(1.0 - new_actions + 1e-10))).sum(dim=2).mean()
         alpha_loss = 0
 
         if self._use_automatic_entropy_tuning:  # it comes first; seems to work also when put after policy update
@@ -469,11 +470,18 @@ class ATAC(RLAlgorithm):
             min_q_new_actions = self._critic_mean(self._qf1, actor_actions, obs, A)
             for parameter in q_parameters:
                 parameter.requires_grad_(True)
-            policy_entropy = (
-                actor_actions * torch.log2(actor_actions + 1e-10)
-            ).sum(dim=2).mean()
+            policy_entropy = (-(actor_actions * torch.log(actor_actions + 1e-10)
+                               + (1.0 - actor_actions) * torch.log(1.0 - actor_actions + 1e-10))).sum(dim=2).mean()
         else:
+            # Relative-pessimism Actor objective: differentiate through the
+            # Critic with respect to actions, while never accumulating Critic
+            # gradients during the Actor optimizer step.
+            q_parameters = list(self._qf1.parameters())
+            for parameter in q_parameters:
+                parameter.requires_grad_(False)
             min_q_new_actions = self._critic_mean(self._qf1, new_actions, obs, A)
+            for parameter in q_parameters:
+                parameter.requires_grad_(True)
         if warmstart:  # BC warmstart
 
             policy_log_prob = (actions * torch.log2(actions + 1e-10)).sum(dim=2).mean()
@@ -497,7 +505,12 @@ class ATAC(RLAlgorithm):
             # 尝试的loss
             # policy_loss = mse_loss_fn(new_actions, actions)
             # 修改后的消融loss，前提是warmstart必须为零
-            policy_loss = (qf1_new_actions - qf1_pred).mean()
+            # ``min_q_new_actions`` is evaluated from the non-detached Actor
+            # output above; ``qf1_pred`` is the logged-action reference.  The
+            # Critic parameters are frozen during the actor step below, so
+            # this relative-pessimism term propagates gradients to the Actor.
+            policy_loss = (-(min_q_new_actions - qf1_pred).mean()
+                           - alpha * (policy_entropy - self._target_entropy))
             # policy_loss = normalized_sum(-min_q_new_actions.mean(), -policy_entropy, alpha)
 
         log_info = dict(

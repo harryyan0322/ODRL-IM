@@ -50,15 +50,15 @@ def train_func(ctxt=None,
                # Evaluation mode
                evaluation_mode=False,
                # Trainer parameters
-               n_epochs=200,  # number of training epochs
+               n_epochs=2000,  # PDF protocol
                batch_size=0,  # number of samples collected per update
                # Algorithm parameters
-               discount=0,
-               policy_lr=5e-6,  # optimization stepsize for policy update
+               discount=0.9,
+               policy_lr=5e-7,  # PDF protocol
                value_lr=5e-4,  # optimization stepsize for value regression
                alpha_lr=5e-5,  # optimization stepsize for entropy temperature
                target_update_tau=5e-3,  # for target network
-               minibatch_size=8,  # optimization/replaybuffer minibatch size
+               minibatch_size=5,  # PDF protocol
                n_grad_steps=1000,  # number of gradient updates per epoch
                n_warmstart_steps=0,  # number of warm-up steps
                fixed_alpha=None,  # whether to fix the temperate parameter
@@ -66,8 +66,8 @@ def train_func(ctxt=None,
                num_evaluation_episodes=5,  # number of episodes to evaluate (only affect off-policy algorithms)
                reward_scale=1.0,  # scale rewards before constructing Bellman update, only used in off-policy algorithms
                # ATAC parameters
-               beta=1.0,  # weight on the Bellman error , 1.0 for ATAC, 0.0 for BC
-               norm_constraint=100,
+               beta=4.0,  # PDF protocol
+               norm_constraint=1000,
                use_two_qfs=True,  # whether to use two q function
                q_eval_mode='0.5_0.5',
                init_pess=False,
@@ -99,7 +99,7 @@ def train_func(ctxt=None,
                gnn_backbone='gcn',
                gnn_depth=3,
                gat_heads=1,
-               paper_architecture=False,
+               paper_architecture=True,
                ):
     """ Train an agent in batch mode. """
 
@@ -279,7 +279,7 @@ def train_func(ctxt=None,
         num_evaluation_episodes=num_evaluation_episodes,
         fixed_alpha=fixed_alpha,
         reward_scale=reward_scale,
-        target_entropy=-1000,  # -np.prod(env_spec.action_space.shape),后续env写完后可以不在此处指定
+        target_entropy=0.0,
         data_saving_dir=data_saving_dir,
         Vmin=vmin,
         Vmax=vmax,
@@ -503,13 +503,13 @@ if __name__ == '__main__':
     parser.add_argument('--n_warmstart_steps', type=int, default=0)
     parser.add_argument('--fixed_alpha', type=float, default=None)
     # 批评网络的参数，可以作为新的消融验证
-    parser.add_argument('--beta', type=float, default=2)
+    parser.add_argument('--beta', type=float, default=4)
     parser.add_argument('--norm_constraint', type=float, default=1000)
-    parser.add_argument('--policy_lr', type=float, default=1e-4)
+    parser.add_argument('--policy_lr', type=float, default=5e-7)
     parser.add_argument('--value_lr', type=float, default=5e-4)
     parser.add_argument('--alpha_lr', type=float, default=5e-5)
     parser.add_argument('--target_update_tau', type=float, default=5e-3)
-    parser.add_argument('--minibatch_size', type=int, default=8)
+    parser.add_argument('--minibatch_size', type=int, default=5)
     parser.add_argument('--use_deterministic_evaluation', type=str2bool, default=True)
     # 使用双Q，会多一个qf2，和qf1的参数，以及更新方式一样
     parser.add_argument('--use_two_qfs', type=str2bool, default=True)
@@ -517,7 +517,7 @@ if __name__ == '__main__':
     parser.add_argument('--q_eval_mode', type=str, default='0.5_0.5')
     parser.add_argument('--reward_scale', type=float, default=1)
     parser.add_argument('--trial', type=int, default=1)
-    parser.add_argument('--n_grad_steps', type=int, default=500)
+    parser.add_argument('--n_grad_steps', type=int, default=1000)
     parser.add_argument('--use_policy_lr_scheduler', type=str2bool, default=False)
     # parser.add_argument('--use_critic_lr_scheduler', type=str2bool, default=False)
     parser.add_argument('--use_std_loss', type=str2bool, default=False)
@@ -526,7 +526,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_MLP', type=str2bool, default=False)
 
     # 可修改的参数区间
-    parser.add_argument('--n_epochs', type=int, default=100)
+    parser.add_argument('--n_epochs', type=int, default=2000)
 
     # 存代码的参数
     parser.add_argument('--log_path', type=str, default='log11-11')
@@ -551,7 +551,7 @@ if __name__ == '__main__':
                         default='gcn')
     parser.add_argument('--gnn_depth', type=int, default=3)
     parser.add_argument('--gat_heads', type=int, default=1)
-    parser.add_argument('--paper_architecture', type=str2bool, default=False)
+    parser.add_argument('--paper_architecture', type=str2bool, default=True)
     parser.add_argument('--torch_n_threads', type=int, default=2)
     train_kwargs = vars(parser.parse_args())
     run(**train_kwargs)

@@ -90,6 +90,9 @@ MPGNN/scripts/
 !MPGNN/partition_inference.py
 !MPGNN/run_training_suite.py
 !MPGNN/statistical_analysis.py
+!MPGNN/behavior_policy_sources.py
+!MPGNN/collect_behavior_data.py
+!MPGNN/collect_piano_data.py
 !MPGNN/atac/
 !MPGNN/atac/**
 !MPGNN/tests/
