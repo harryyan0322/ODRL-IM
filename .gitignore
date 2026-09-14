@@ -131,3 +131,15 @@ MPGNN/bin/
 .env
 .env.*
 *.local
+
+# Public data tooling is tracked; generated inputs and outputs are not.
+data/raw/
+data/graphs/
+data/offline/
+data/manifests/
+data/logs/
+data/*.pkl
+data/*.pickle
+data/*.ckpt
+data/*.pt
+data/*.pth

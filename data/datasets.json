@@ -1,0 +1,42 @@
+{
+  "format": "mpgnn_public_dataset_catalog_v1",
+  "notes": "Links point to public dataset landing pages or direct archives. Downloaded files are local inputs and are not part of this repository.",
+  "datasets": {
+    "dolphins": {
+      "name": "Dolphins social network",
+      "url": "https://networkrepository.com/soc-dolphins.php",
+      "alternate_url": "http://www-personal.umich.edu/~mejn/netdata/dolphins.zip",
+      "stored_semantics": "undirected_simple_edge_list"
+    },
+    "wiki_vote": {
+      "name": "Wikipedia vote network",
+      "url": "https://snap.stanford.edu/data/wiki-Vote.html",
+      "download_url": "https://snap.stanford.edu/data/wiki-Vote.txt.gz",
+      "stored_semantics": "directed_edge_list; use --node-index-base 0"
+    },
+    "epinions": {
+      "name": "Epinions trust network",
+      "url": "https://snap.stanford.edu/data/soc-Epinions1.html",
+      "download_url": "https://snap.stanford.edu/data/soc-Epinions1.txt.gz",
+      "stored_semantics": "directed_edge_list; convert to the paper's undirected input when required"
+    },
+    "buzznet": {
+      "name": "Buzznet social network",
+      "url": "https://snap.stanford.edu/data/soc-Buzznet.html",
+      "download_url": "https://snap.stanford.edu/data/soc-Buzznet.txt.gz",
+      "stored_semantics": "undirected_simple_edge_list"
+    },
+    "douban": {
+      "name": "Douban social network",
+      "url": "https://snap.stanford.edu/data/soc-Douban.html",
+      "download_url": "https://snap.stanford.edu/data/soc-Douban.txt.gz",
+      "stored_semantics": "undirected_simple_edge_list"
+    },
+    "twitter_follows": {
+      "name": "Twitter follows network",
+      "url": "http://konect.cc/networks/twitter_follows/",
+      "alternate_url": "https://networkrepository.com/soc-twitter-follows.php",
+      "stored_semantics": "directed_edge_list; convert to the paper's undirected input when required"
+    }
+  }
+}
