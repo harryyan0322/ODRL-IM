@@ -14,6 +14,9 @@ else
 fi
 
 cd "${ROOT}"
+"${PYTHON}" -m py_compile \
+  data/generate_offline_data.py \
+  data/build_offline_from_seed_sets.py
 PYTHONPATH="${ROOT}/MPGNN" "${PYTHON}" -m unittest -q \
   MPGNN/tests/test_model_ablation.py \
   MPGNN/tests/test_influence_evaluator.py \
