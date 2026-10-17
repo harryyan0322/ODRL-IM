@@ -6,7 +6,7 @@ weighted-cascade independent-cascade model.
 ## Install
 
 ```bash
-conda activate zhihao
+conda activate odrlim
 pip install -r requirements.txt
 pip install -r MPGNN/requirements-inference.txt
 ```
